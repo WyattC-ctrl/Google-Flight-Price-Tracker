@@ -1,8 +1,11 @@
 import json
 import os
 import sys
+from dotenv import load_dotenv
 from scraper import scrape_trip
 from notify import send_telegram, format_message
+
+load_dotenv()
 
 
 def main():
