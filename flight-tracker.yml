@@ -2,10 +2,9 @@ name: Flight Price Tracker
 
 on:
   schedule:
-    # Approximates every 7.0 hours — 3 runs/day at:
-    # 07:00 · 14:00 · 21:00 UTC
-    - cron: '0 7,14,21 * * *'
-  workflow_dispatch: # Manual trigger from GitHub UI
+    - cron: '0 0,7,14,21 * * *'
+    - cron: '30 3,10,17 * * *'
+  workflow_dispatch:
 
 jobs:
   track-flights:
@@ -27,8 +26,13 @@ jobs:
 
       - name: Install Playwright browsers
         run: |
+          pip install playwright
           playwright install chromium
-          playwright install-deps chromium
+          sudo apt-get install -y \
+            libglib2.0-0 libnss3 libnspr4 libatk1.0-0 libatk-bridge2.0-0 \
+            libcups2 libdrm2 libdbus-1-3 libxcb1 libxkbcommon0 libx11-6 \
+            libxcomposite1 libxdamage1 libxext6 libxfixes3 libxrandr2 \
+            libgbm1 libpango-1.0-0 libcairo2 libasound2t64
 
       - name: Run flight scraper
         env:
@@ -36,8 +40,8 @@ jobs:
           TELEGRAM_CHAT_ID:   ${{ secrets.TELEGRAM_CHAT_ID }}
         run: python main.py
 
-      - name: Upload debug screenshot on failure
-        if: failure()
+      - name: Upload debug screenshot
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: debug-screenshot
