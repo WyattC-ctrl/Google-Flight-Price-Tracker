@@ -1,0 +1,27 @@
+{
+  "trips": [
+    {
+      "label": "NYC → Miami Summer",
+      "origin": "JFK",
+      "destination": "MIA",
+      "depart_date": "2025-07-10",
+      "return_date": "2025-07-17",
+      "trip_type": "round_trip",
+      "max_stops": 1,
+      "active": true
+    },
+    {
+      "label": "NYC → LA Weekend",
+      "origin": "EWR",
+      "destination": "LAX",
+      "depart_date": "2025-08-01",
+      "return_date": "2025-08-04",
+      "trip_type": "round_trip",
+      "max_stops": 0,
+      "active": false
+    }
+  ],
+  "currency": "USD",
+  "top_results": 3,
+  "notify_only_if_cheaper_than": null
+}

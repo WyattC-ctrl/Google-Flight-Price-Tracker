@@ -1,0 +1,46 @@
+name: Flight Price Tracker
+
+on:
+  schedule:
+    # Approximates every 7.0 hours — 3 runs/day at:
+    # 07:00 · 14:00 · 21:00 UTC
+    - cron: '0 7,14,21 * * *'
+  workflow_dispatch: # Manual trigger from GitHub UI
+
+jobs:
+  track-flights:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
+      - name: Install Playwright browsers
+        run: |
+          playwright install chromium
+          playwright install-deps chromium
+
+      - name: Run flight scraper
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID:   ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python main.py
+
+      - name: Upload debug screenshot on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-screenshot
+          path: screenshot_*.png
+          if-no-files-found: ignore
+          retention-days: 3
