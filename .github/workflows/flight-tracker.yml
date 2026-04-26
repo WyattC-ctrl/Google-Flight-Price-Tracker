@@ -1,22 +1,20 @@
-name: Flight Price Tracker
-
+name: Flight Tracker
 on:
   schedule:
-    - cron: '0 0,8,16 * * *'
-  workflow_dispatch:
+    - cron: '0 */8  * * *'
+  workflow_dispatch:        # Manual trigger option
 
 jobs:
-  track-flights:
+  scrape:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.2.2
-      - uses: actions/setup-python@v5.6.0
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
         with:
-          python-version: '3.12'
-      - run: pip install requests
-      - name: Run scraper
+          python-version: '3.11'
+      - run: pip install -r requirements.txt
+      - run: python main.py
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHAT_ID:   ${{ secrets.TELEGRAM_CHAT_ID }}
-          SERPAPI_KEY:        ${{ secrets.SERPAPI_KEY }}
-        run: python main.py
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          SERPAPI_KEY: ${{ secrets.SERPAPI_KEY }}
