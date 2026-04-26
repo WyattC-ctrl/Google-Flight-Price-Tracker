@@ -4,8 +4,8 @@
       "label": "NYC → Miami Summer",
       "origin": "JFK",
       "destination": "MIA",
-      "depart_date": "2026-07-10",
-      "return_date": "2026-07-17",
+      "depart_date": "2026-08-10",
+      "return_date": "2026-08-17",
       "trip_type": "round_trip",
       "max_stops": 1,
       "active": true
