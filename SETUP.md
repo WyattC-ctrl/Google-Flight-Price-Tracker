@@ -80,8 +80,8 @@ Edit **`config.json`** to set your destinations and dates:
       "label": "NYC to Miami",
       "origin": "JFK",
       "destination": "MIA",
-      "depart_date": "2025-07-10",
-      "return_date": "2025-07-17",
+      "depart_date": "2026-07-10",
+      "return_date": "2026-07-17",
       "trip_type": "round_trip",
       "max_stops": 1,
       "active": true
@@ -118,7 +118,7 @@ You can add as many trips as you want — each one gets its own message.
 
 ```
 ✈️ NYC → Miami Summer
-📅 2025-07-10 ↩ 2025-07-17
+📅 2026-08-10 ↩ 2026-09-17
 
 🏆 Top 3 cheapest flights:
 
