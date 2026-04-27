@@ -1,0 +1,37 @@
+name: 8-Hour Bot Sync
+on:
+  schedule:
+    - cron: '0 */8 * * *' # 12am, 8am, 4pm UTC
+  workflow_dispatch:      # Manual trigger for testing
+
+jobs:
+  sync-and-check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write     # Needed to push changes to flights.json
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Process Telegram Messages
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          SERPAPI_KEY: ${{ secrets.SERPAPI_KEY }}
+        run: python bot_handler.py
+
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add . # This catches changes to your JSON flight list
+          git commit -m "Automated: Sync flight data from Telegram" || exit 0
+          git push

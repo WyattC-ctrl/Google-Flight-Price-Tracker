@@ -172,43 +172,39 @@ Example:
         send_message(chat_id, "Unknown command. Type /help for available commands.")
 
 def poll_messages():
-    """Poll Telegram for new messages."""
-    offset = 0
-    
-    print("🤖 Flight Tracker Bot started. Listening for commands...")
-    
-    while True:
-        try:
-            response = requests.get(f"{TELEGRAM_API}/getUpdates", 
-                                   params={"offset": offset, "timeout": 30},
-                                   timeout=35)
-            data = response.json()
-            
-            if not data.get("ok"):
-                print(f"Error from Telegram: {data.get('description')}")
-                continue
-            
-            for update in data.get("result", []):
-                offset = update["update_id"] + 1
-                
-                # Handle text messages
-                if "message" in update and "text" in update["message"]:
-                    msg = update["message"]
-                    chat_id = msg["chat"]["id"]
-                    user_id = msg["from"]["id"]
-                    text = msg["text"]
-                    
-                    print(f"Received: {text}")
-                    handle_command(chat_id, user_id, text)
+    """Sync with Telegram, process pending messages, and exit."""
+    print("🤖 Syncing with Telegram...")
+    try:
+        # Fetch all messages sent while the bot was 'asleep'
+        response = requests.get(f"{TELEGRAM_API}/getUpdates", timeout=15)
+        data = response.json()
         
-        except requests.exceptions.Timeout:
-            continue
-        except Exception as e:
-            print(f"Error polling messages: {e}")
-            continue
+        if not data.get("ok"):
+            print(f"Error: {data.get('description')}")
+            return
+        
+        updates = data.get("result", [])
+        if not updates:
+            print("No new messages.")
+            return
+
+        last_id = 0
+        for update in updates:
+            last_id = update["update_id"]
+            if "message" in update and "text" in update["message"]:
+                msg = update["message"]
+                # This calls your add/delete/list functions
+                handle_command(msg["chat"]["id"], msg["from"]["id"], msg["text"])
+        
+        # Tell Telegram to clear the queue
+        requests.get(f"{TELEGRAM_API}/getUpdates", params={"offset": last_id + 1})
+        print(f"Done! Processed {len(updates)} messages.")
+
+    except Exception as e:
+        print(f"Sync Error: {e}")
 
 if __name__ == "__main__":
     if not TOKEN or not CHAT_ID:
-        print("ERROR: TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID must be set.")
+        print("ERROR: API credentials missing.")
     else:
-        poll_messages()
+        poll_messages() # Runs ONCE and exits
