@@ -154,18 +154,27 @@ Example:
     
     elif text_lower.startswith("/add"):
         parts = text.split()
-        # Check if the user provided all info: /add Label Origin Dest Depart Return
-        if len(parts) >= 6:
+        
+        # Check if they provided 5 pieces of info (Origin, Dest, Depart, Return)
+        # Example: /add ORD DFW 2026-08-12 2026-08-16
+        if len(parts) == 5:
+            origin, dest, depart, ret = parts[1], parts[2], parts[3], parts[4]
+            label = f"{origin} to {dest}" # Auto-generate a label
+            result = add_flight(label, origin, dest, depart, ret)
+            send_message(chat_id, result)
+            
+        # Example with a specific label: /add "Summer Trip" ORD DFW 2026-08-12 2026-08-16
+        elif len(parts) >= 6:
             label = parts[1]
             origin = parts[2]
             destination = parts[3]
             depart = parts[4]
             return_date = parts[5]
-            
             result = add_flight(label, origin, destination, depart, return_date)
             send_message(chat_id, result)
+            
         else:
-            # Fall back to step-by-step if they only typed /add
+            # Fall back to step-by-step if the format is wrong
             user_conversations[user_id] = {"command": "add", "step": 0}
             handle_add_flight(chat_id, user_id, "")
     
