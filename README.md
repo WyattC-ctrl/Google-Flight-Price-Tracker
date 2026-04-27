@@ -11,6 +11,7 @@ A fully automated flight price tracker that runs on GitHub Actions — no server
 - **Accepts city names** — type `chicago` and it automatically searches both O'Hare (ORD) and Midway (MDW)
 - **Tracks price history** in a Supabase database — alerts you when a price drops or hits a new low
 - **Supports multiple trips** — track as many routes as you want simultaneously
+- **Manage flights from Telegram** — add, delete, pause, and resume trips by sending commands to your bot — no GitHub editing needed
 - **Zero cost to run** — GitHub Actions free tier, SerpAPI free tier, and Supabase free tier are all sufficient
 
 ---
@@ -229,6 +230,108 @@ A successful run looks like this in the logs:
   ...
   Total unique flights: 24
   Telegram sent ✓
+```
+
+---
+
+## Managing Flights from Telegram
+
+Instead of editing `config.json` on GitHub every time, you can add, remove, and manage your tracked flights directly from Telegram by sending commands to your bot.
+
+### Available Commands
+
+| Command | What It Does |
+|---|---|
+| `/add` | Add a new flight to track |
+| `/delete` | Remove a tracked flight |
+| `/list` | Show all your tracked flights with their IDs |
+| `/pause` | Pause alerts for a trip without deleting it |
+| `/resume` | Resume a paused trip |
+| `/help` | Show all available commands |
+
+---
+
+### Adding a Flight
+
+Send your bot:
+```
+/add ORIGIN DESTINATION DEPART_DATE RETURN_DATE
+```
+
+**Round trip example:**
+```
+/add JFK MIA 2026-08-10 2026-08-17
+```
+
+**One way example (no return date):**
+```
+/add JFK MIA 2026-08-10
+```
+
+**Using city names:**
+```
+/add chicago miami 2026-08-10 2026-08-17
+```
+
+The bot replies confirming the trip was added with its ID number.
+
+---
+
+### Listing Your Flights
+
+Send:
+```
+/list
+```
+
+The bot replies with all your trips:
+```
+✈️ Tracked Flights
+
+✅ #1 JFK → MIA
+   📅 2026-08-10 ↩ 2026-08-17
+
+⏸ #2 EWR → LAX
+   📅 2026-09-01 ↩ 2026-09-07
+
+/delete ID — remove a trip
+/pause ID — pause alerts
+```
+
+---
+
+### Deleting a Flight
+
+Send:
+```
+/delete 1
+```
+
+Replaces the need to edit `config.json` — the trip is removed immediately.
+
+---
+
+### Pausing and Resuming
+
+Pause a trip when your dates pass or you want a break from alerts:
+```
+/pause 2
+```
+
+Resume it later:
+```
+/resume 2
+```
+
+---
+
+### Date Format
+
+Dates must always be in `YYYY-MM-DD` format:
+```
+✅ 2026-08-10
+❌ 08/10/2026
+❌ Aug 10 2026
 ```
 
 ---
