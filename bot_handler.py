@@ -152,9 +152,22 @@ Example:
     elif text_lower == "/list":
         send_message(chat_id, list_flights())
     
-    elif text_lower == "/add":
-        user_conversations[user_id] = {"command": "add", "step": 0}
-        handle_add_flight(chat_id, user_id, "")
+    elif text_lower.startswith("/add"):
+        parts = text.split()
+        # Check if the user provided all info: /add Label Origin Dest Depart Return
+        if len(parts) >= 6:
+            label = parts[1]
+            origin = parts[2]
+            destination = parts[3]
+            depart = parts[4]
+            return_date = parts[5]
+            
+            result = add_flight(label, origin, destination, depart, return_date)
+            send_message(chat_id, result)
+        else:
+            # Fall back to step-by-step if they only typed /add
+            user_conversations[user_id] = {"command": "add", "step": 0}
+            handle_add_flight(chat_id, user_id, "")
     
     elif text_lower == "/delete":
         user_conversations[user_id] = {"command": "delete"}
