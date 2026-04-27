@@ -1,9 +1,11 @@
 import json
 import os
 import sys
+from datetime import datetime
 from dotenv import load_dotenv
 from scraper import scrape_trip
 from notify import send_telegram, format_message
+from db import insert_daily_price, cleanup_old_data, check_price_conditions
 
 load_dotenv()
 
@@ -39,11 +41,22 @@ def main():
                 f"⚠️ <b>Flight Bot Error</b>\nTrip: {label}\nError: {e}")
             continue
 
+        conditions = {}
+        if flights:
+            lowest = flights[0]['price']
+            today_str = datetime.now().strftime("%Y-%m-%d")
+            try:
+                insert_daily_price(label, today_str, lowest)
+                cleanup_old_data()
+                conditions = check_price_conditions(label, lowest)
+            except Exception as e:
+                print(f"  DB ERROR: {e}")
+
         if budget and flights and flights[0]["price"] >= budget:
             print(f"  Cheapest (${flights[0]['price']:,}) above budget (${budget:,}) — skipping.")
             continue
 
-        msg     = format_message(trip, flights, top_n)
+        msg     = format_message(trip, flights, top_n, conditions)
         success = send_telegram(token, chat_id, msg)
         print(f"  Telegram {'sent ✓' if success else 'FAILED ✗'}")
 

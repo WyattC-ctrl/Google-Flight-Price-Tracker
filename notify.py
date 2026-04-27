@@ -20,8 +20,8 @@ def send_telegram(token: str, chat_id: str, message: str) -> bool:
         return False
 
 
-def format_message(trip: dict, flights: list[dict], top_n: int = 3) -> str:
-    now         = datetime.utcnow().strftime("%b %d, %Y · %H:%M UTC")
+def format_message(trip: dict, flights: list[dict], top_n: int = 3, conditions: dict = None) -> str:
+    now         = datetime.now().strftime("%b %d, %Y · %H:%M UTC")
     origin      = trip["origin"]
     destination = trip["destination"]
     depart_date = trip["depart_date"]
@@ -48,10 +48,21 @@ def format_message(trip: dict, flights: list[dict], top_n: int = 3) -> str:
     for i, f in enumerate(top):
         lines += [
             f"{medals[i]} <b>{f['price_label']}</b>  ·  {f['airline']}",
+            f"   {f.get('origin', origin)} → {f.get('destination', destination)}",
             f"   🕐 {f['depart_time']} → {f['arrive_time']}",
             f"   ⏱ {f['duration']}  ·  {f['stops']}",
             "",
         ]
+    if conditions:
+        indicators = []
+        if conditions.get("decreased_last_3_days"):
+            indicators.append("📉 Price decreased in last 3 days")
+        if conditions.get("lowest_last_7_days"):
+            indicators.append("🔥 Lowest price in last 7 days")
+        if conditions.get("lowest_last_30_days"):
+            indicators.append("💎 Lowest price in last 30 days")
+        if indicators:
+            lines += ["", "📊 <b>Price Alerts:</b>"] + indicators + [""]
     lines += [
         f"🔗 <a href='https://www.google.com/travel/flights?q=flights+from+{origin}+to+{destination}+on+{depart_date}'>View on Google Flights</a>",
         f"",

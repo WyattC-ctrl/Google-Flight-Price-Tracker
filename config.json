@@ -1,9 +1,9 @@
 {
   "trips": [
     {
-      "label": "SEA → CHI July 4",
-      "origin": "SEA",
-      "destination": "ORD",
+      "label": "Seattle \u2192 Chicago July 4",
+      "origin": "Seattle",
+      "destination": "Chicago",
       "depart_date": "2026-07-02",
       "return_date": "2026-07-05",
       "trip_type": "round_trip",
@@ -11,7 +11,7 @@
       "active": true
     },
     {
-      "label": "NYC → LA Weekend",
+      "label": "NYC \u2192 LA Weekend",
       "origin": "EWR",
       "destination": "LAX",
       "depart_date": "2026-06-01",
@@ -19,6 +19,16 @@
       "trip_type": "round_trip",
       "max_stops": 0,
       "active": false
+    },
+    {
+      "label": "Test Flight",
+      "origin": "LAX",
+      "destination": "NYC",
+      "depart_date": "2026-08-01",
+      "return_date": "2026-08-08",
+      "trip_type": "round_trip",
+      "max_stops": 1,
+      "active": true
     }
   ],
   "currency": "USD",

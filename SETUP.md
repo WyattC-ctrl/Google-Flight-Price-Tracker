@@ -57,7 +57,30 @@ requirements.txt
 
 ---
 
-## Step 4 — Add your secrets
+## Step 4 — Set up Supabase Database
+
+1. Go to https://supabase.com and create a free account.
+2. Click **"New project"** and fill in the details (choose a name, database password, etc.).
+3. Wait for the project to be ready (~2 minutes).
+4. In your Supabase dashboard → **Settings → API**
+   - Copy the **Project URL** (looks like `https://abcdefghijklmnop.supabase.co`)
+   - Copy the **anon public** key (starts with `eyJ...`)
+5. In your Supabase dashboard → **SQL Editor**
+   - Run this query to create the table:
+
+     ```sql
+     CREATE TABLE flight_prices (
+         id SERIAL PRIMARY KEY,
+         trip_label TEXT NOT NULL,
+         date DATE NOT NULL,
+         lowest_price INTEGER NOT NULL,
+         UNIQUE(trip_label, date)
+     );
+     ```
+
+---
+
+## Step 5 — Add your secrets
 
 1. In your repo → **Settings → Secrets and variables → Actions**
 2. Click **"New repository secret"** and add:
@@ -66,10 +89,12 @@ requirements.txt
    |-----------------------|--------------------------------|
    | `TELEGRAM_BOT_TOKEN`  | `7123456789:AAFxxxxxxxxxxxxxxx` |
    | `TELEGRAM_CHAT_ID`    | `123456789`                    |
+   | `SUPABASE_URL`        | `https://abcdefghijklmnop.supabase.co` |
+   | `SUPABASE_ANON_KEY`   | `eyJ...`                       |
 
 ---
 
-## Step 5 — Configure your trips
+## Step 6 — Configure your trips
 
 Edit **`config.json`** to set your destinations and dates:
 
@@ -105,7 +130,7 @@ You can add as many trips as you want — each one gets its own message.
 
 ---
 
-## Step 6 — Test it manually
+## Step 7 — Test it manually
 
 1. Go to your repo → **Actions** tab
 2. Click **"Flight Price Tracker"**
@@ -134,7 +159,11 @@ You can add as many trips as you want — each one gets its own message.
    🕐 7:00 AM → 1:10 PM
    ⏱ 6 hr 10 min  ·  1 stop
 
-🔗 View on Google Flights
+� Price Alerts:
+📉 Price decreased in last 3 days
+🔥 Lowest price in last 7 days
+
+�🔗 View on Google Flights
 
 Checked: Jun 15, 2025 · 12:00 UTC
 ```
