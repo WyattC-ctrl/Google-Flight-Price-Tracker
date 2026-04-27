@@ -20,16 +20,6 @@
       "max_stops": 0,
       "active": false
     },
-    {
-      "label": "Test Flight",
-      "origin": "LAX",
-      "destination": "NYC",
-      "depart_date": "2026-08-01",
-      "return_date": "2026-08-08",
-      "trip_type": "round_trip",
-      "max_stops": 1,
-      "active": true
-    }
   ],
   "currency": "USD",
   "top_results": 3,
